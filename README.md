@@ -44,21 +44,21 @@ sequenceDiagram
 ```
 
 root/
-├── app.py                # Flask webhook endpoint + health check
-├── tasks.py              # Celery app & async task definitions
-├── linkedin.py           # PhantomBuster client wrapper
-├── hubspot/
-│   ├── client.py         # thin HubSpot API wrapper
-│   └── utils.py          # signature verification, helpers
-├── utils/
-│   └── csv_helpers.py    # JSON→CSV converter, tmp file manager
-├── requirements.txt
-├── Procfile              # Heroku dyno declarations
-├── runtime.txt           # Heroku Python runtime pin
-└── README.md             # you’re reading it
+├── app.py                     # Flask webhook receiver ONLY
+├── tasks.py                   # Celery orchestration (still imports the client)
+├── hubspot/                   # existing HubSpot helpers
+├── onfrontiers/               # ← new package for every OF call
+│   ├── __init__.py
+│   ├── config.py              # env + pydantic Settings
+│   ├── auth.py                # token creation / refresh
+│   └── client.py              # thin typed wrapper for GraphQL ops
+├── tests/
+│   ├── __init__.py
+│   ├── test_auth.py
+│   └── test_billing.py
+└── requirements.txt
 
-Why so small?
-Polling, scheduler and extra beat dynos are gone; Redis is only required if you turn on Celery workers (recommended for > 1 concurrent trigger).
+
 ```
 
 ⸻
@@ -90,9 +90,9 @@ pip install -r requirements.txt
 
     3.	Env vars (.env)
 
-FLASK_ENV=development
-HUBSPOT_APP_SECRET=**_
-HUBSPOT_API_TOKEN=_**
+FLASK*ENV=development
+HUBSPOT_APP_SECRET=\*\**
+HUBSPOT*API_TOKEN=*\*\*
 PHANTOMBUSTER_API_KEY=\*\*\*
 REDIS_URL=redis://localhost:6379/0 # optional
 
