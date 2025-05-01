@@ -1,6 +1,6 @@
-# tests/test_client.py
 from onfrontiers import OnFrontiersClient
 
 def test_balance_query():
     client = OnFrontiersClient()
-    assert client.balance_cents("918") is not None
+    balance = client.balance_cents("918")      # use a billing-ID you can see
+    assert balance is not None and balance >= 0

@@ -24,12 +24,22 @@ class OnFrontiersClient:
 
     # --- public helpers -------------------------------------------------- #
 
+    # onfrontiers/client.py
     def balance_cents(self, billing_id: str) -> int | None:
         data = self._client.execute(
             _BALANCE_QUERY, variable_values={"id": billing_id}
         )
         acct = data.get("billingAccount")
-        return acct["credit_balance"]["cents"] if acct else None
+        if not acct:
+            return None
+
+        # Some GraphQL scalars come back as str → normalise to int
+        cents_raw = acct["credit_balance"]["cents"]
+        try:
+            return int(cents_raw)
+        except (TypeError, ValueError):
+            # unexpected payload; bubble up or log as needed
+            raise RuntimeError(f"Unexpected cents value: {cents_raw!r}")
 
     # example skeleton for later:
     # def create_unregistered_expert(self, **kwargs): …

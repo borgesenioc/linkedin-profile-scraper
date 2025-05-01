@@ -1,6 +1,6 @@
-# tests/test_client.py
-from onfrontiers import OnFrontiersClient
+from onfrontiers.auth import fetch_token
 
 def test_fetch_token():
-    token = OnFrontiersClient.fetch_token()
-    assert token and token.count(".") == 2       # crude JWT sanity-check
+    token = fetch_token()
+    # crude JWT sanity-check: three dot-separated chunks
+    assert token and token.count(".") == 2
